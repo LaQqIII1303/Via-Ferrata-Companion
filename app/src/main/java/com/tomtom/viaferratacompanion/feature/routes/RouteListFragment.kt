@@ -1,6 +1,30 @@
 package com.tomtom.viaferratacompanion.feature.routes
 
-class RouteListFragment {
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.tomtom.viaferratacompanion.R
+import com.tomtom.viaferratacompanion.databinding.FragmentRouteListBinding
+
+class RouteListFragment : Fragment(R.layout.fragment_route_list) {
+
+    private lateinit var binding: FragmentRouteListBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        return FragmentRouteListBinding.inflate(inflater).root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding.routes.adapter = RouteAdapter(routes)
+        binding.routes.layoutManager = LinearLayoutManager(context)
+    }
+
     val routes = listOf(
         ViaFerrata(
             id = 1,
