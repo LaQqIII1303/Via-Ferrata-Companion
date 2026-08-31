@@ -15,25 +15,33 @@ class RouteAdapter(
         parent: ViewGroup, viewType: Int
     ): RouteViewHolder {
         return RouteViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_via_ferrata, parent)
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_via_ferrata, parent, false
+            )
         )
     }
 
     override fun onBindViewHolder(
         holder: RouteViewHolder, position: Int
     ) {
-        if (routes.size < position) return
         val route = routes[position]
+        val context = holder.itemView.context
         holder.binding.ferrataName.text = route.name
         holder.binding.countryName.text = route.country
-        holder.binding.difficulty.text = route.difficulty
-        holder.binding.duration.text = route.durationMinutes.toString()
-        holder.binding.elevation.text = route.elevationGain.toString()
+        holder.binding.difficulty.text = context.getString(
+            R.string.route_difficulty, route.difficulty
+        )
+        holder.binding.duration.text = context.getString(
+            R.string.route_duration, route.durationMinutes
+        )
+        holder.binding.elevation.text = context.getString(
+            R.string.route_elevation, route.elevationGain
+        )
     }
 
     override fun getItemCount() = routes.size
 
     class RouteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val binding = ItemViaFerrataBinding.inflate(LayoutInflater.from(view.context))
+        val binding = ItemViaFerrataBinding.bind(view)
     }
 }
