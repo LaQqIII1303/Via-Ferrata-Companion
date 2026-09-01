@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tomtom.viaferratacompanion.R
 import com.tomtom.viaferratacompanion.databinding.ItemViaFerrataBinding
 
-class RouteAdapter : RecyclerView.Adapter<RouteAdapter.RouteViewHolder>() {
-
-    private var _routes: List<ViaFerrata> = emptyList()
+class RouteAdapter(
+    private val routes: List<ViaFerrata>
+) : RecyclerView.Adapter<RouteAdapter.RouteViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -24,7 +24,7 @@ class RouteAdapter : RecyclerView.Adapter<RouteAdapter.RouteViewHolder>() {
     override fun onBindViewHolder(
         holder: RouteViewHolder, position: Int
     ) {
-        val route = _routes[position]
+        val route = routes[position]
         val context = holder.itemView.context
         holder.binding.ferrataName.text = route.name
         holder.binding.countryName.text = route.country
@@ -39,12 +39,7 @@ class RouteAdapter : RecyclerView.Adapter<RouteAdapter.RouteViewHolder>() {
         )
     }
 
-    override fun getItemCount() = _routes.size
-
-    fun updateRoutes(routes: List<ViaFerrata>) {
-        _routes = routes
-        notifyDataSetChanged()
-    }
+    override fun getItemCount() = routes.size
 
     class RouteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ItemViaFerrataBinding.bind(view)
