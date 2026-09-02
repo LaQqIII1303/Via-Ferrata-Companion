@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Via Ferrata Companion</string>
     <string name="route_difficulty">Difficulty: %1$s</string>
-    <string name="route_duration">Duration: %1$d</string>
-    <string name="route_elevation">Elevation: %1$d</string>
+    <string name="route_duration">Duration: %1$d min</string>
+    <string name="route_elevation">Elevation: %1$d m</string>
+    <string name="route_list_error">Sorry, something went wrong</string>
 </resources>

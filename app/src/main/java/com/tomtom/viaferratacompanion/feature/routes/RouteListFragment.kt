@@ -34,8 +34,23 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.routes.collect { routes ->
-                    adapter.updateRoutes(routes)
+                viewModel.routes.collect { routeListState ->
+                    when (routeListState) {
+                        is RouteListState.Error -> {
+                            binding.routes.visibility = View.GONE
+                            binding.errorText.visibility = View.VISIBLE
+                        }
+
+                        RouteListState.Loading -> {
+                            binding.routes.visibility = View.GONE
+                            binding.loadingProgressBar.visibility = View.VISIBLE
+                        }
+
+                        is RouteListState.Success -> {
+                            binding.routes.visibility = View.VISIBLE
+                            adapter.updateRoutes(routeListState.routes)
+                        }
+                    }
                 }
             }
         }
