@@ -2,6 +2,7 @@ package com.tomtom.viaferratacompanion.feature.routes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +16,18 @@ class RouteListViewModel : ViewModel() {
     val routes: StateFlow<RouteListState> = _routes.asStateFlow()
 
     init {
+        loadRoutes()
+    }
+
+    fun retry() {
+        loadRoutes()
+    }
+
+    private fun loadRoutes() {
+        _routes.value = RouteListState.Loading
         viewModelScope.launch {
             _routes.value = try {
+                delay(1000)
                 RouteListState.Success(repository.getRoutes())
             } catch (e: Exception) {
                 RouteListState.Error(e.message ?: "$e")

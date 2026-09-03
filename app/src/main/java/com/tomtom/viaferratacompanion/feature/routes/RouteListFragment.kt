@@ -32,27 +32,51 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
         binding.routes.adapter = adapter
         binding.routes.layoutManager = LinearLayoutManager(context)
 
+        binding.retryButton.setOnClickListener {
+            viewModel.retry()
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.routes.collect { routeListState ->
                     when (routeListState) {
                         is RouteListState.Error -> {
-                            binding.routes.visibility = View.GONE
-                            binding.errorText.visibility = View.VISIBLE
+                            showError(routeListState)
                         }
 
                         RouteListState.Loading -> {
-                            binding.routes.visibility = View.GONE
-                            binding.loadingProgressBar.visibility = View.VISIBLE
+                            showLoading()
                         }
 
                         is RouteListState.Success -> {
-                            binding.routes.visibility = View.VISIBLE
-                            adapter.updateRoutes(routeListState.routes)
+                            showRoutes(routeListState)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun showError(routeListState: RouteListState.Error) {
+        binding.loadingProgressBar.visibility = View.GONE
+        binding.routes.visibility = View.GONE
+        binding.errorText.text = routeListState.message
+        binding.errorText.visibility = View.VISIBLE
+        binding.retryButton.visibility = View.VISIBLE
+    }
+
+    private fun showLoading() {
+        binding.errorText.visibility = View.GONE
+        binding.routes.visibility = View.GONE
+        binding.retryButton.visibility = View.GONE
+        binding.loadingProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun showRoutes(routeListState: RouteListState.Success) {
+        binding.errorText.visibility = View.GONE
+        binding.loadingProgressBar.visibility = View.GONE
+        binding.retryButton.visibility = View.GONE
+        binding.routes.visibility = View.VISIBLE
+        adapter.updateRoutes(routeListState.routes)
     }
 }
