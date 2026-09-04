@@ -18,7 +18,7 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
 
     private lateinit var binding: FragmentRouteListBinding
     private val viewModel: RouteListViewModel by viewModels()
-    private val adapter = RouteAdapter()
+    private lateinit var adapter: RouteAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -29,6 +29,12 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        adapter = RouteAdapter { route ->
+            val fragment = RouteDetailsFragment.newInstance(route.id)
+            parentFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null).commit()
+        }
+
         binding.routes.adapter = adapter
         binding.routes.layoutManager = LinearLayoutManager(context)
 
@@ -41,7 +47,7 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
                 viewModel.routes.collect { routeListState ->
                     when (routeListState) {
                         is RouteListState.Error -> {
-                            showError(routeListState)
+                            showError(routeListState.message)
                         }
 
                         RouteListState.Loading -> {
@@ -49,20 +55,12 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
                         }
 
                         is RouteListState.Success -> {
-                            showRoutes(routeListState)
+                            showRoutes(routeListState.routes)
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun showError(routeListState: RouteListState.Error) {
-        binding.loadingProgressBar.visibility = View.GONE
-        binding.routes.visibility = View.GONE
-        binding.errorText.text = routeListState.message
-        binding.errorText.visibility = View.VISIBLE
-        binding.retryButton.visibility = View.VISIBLE
     }
 
     private fun showLoading() {
@@ -72,11 +70,19 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
         binding.loadingProgressBar.visibility = View.VISIBLE
     }
 
-    private fun showRoutes(routeListState: RouteListState.Success) {
+    private fun showError(message: String) {
+        binding.loadingProgressBar.visibility = View.GONE
+        binding.routes.visibility = View.GONE
+        binding.errorText.text = message
+        binding.errorText.visibility = View.VISIBLE
+        binding.retryButton.visibility = View.VISIBLE
+    }
+
+    private fun showRoutes(routes: List<ViaFerrata>) {
         binding.errorText.visibility = View.GONE
         binding.loadingProgressBar.visibility = View.GONE
         binding.retryButton.visibility = View.GONE
         binding.routes.visibility = View.VISIBLE
-        adapter.updateRoutes(routeListState.routes)
+        adapter.submitList(routes)
     }
 }
