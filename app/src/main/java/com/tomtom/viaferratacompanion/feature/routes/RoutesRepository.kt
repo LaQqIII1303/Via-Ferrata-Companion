@@ -40,4 +40,6 @@ class RoutesRepository {
             elevationGain = 150
         )
     )
+
+    suspend fun getRoute(id: Long): ViaFerrata = getRoutes().first { it.id == id }
 }

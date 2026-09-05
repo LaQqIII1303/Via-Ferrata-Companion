@@ -5,12 +5,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.tomtom.viaferratacompanion.R
 import com.tomtom.viaferratacompanion.databinding.FragmentRouteDetailsBinding
+import kotlinx.coroutines.launch
 
 class RouteDetailsFragment : Fragment(R.layout.fragment_route_details) {
 
+    private val routeId: Long by lazy {
+        requireArguments().getLong(ARG_ROUTE_ID)
+    }
+
     private lateinit var binding: FragmentRouteDetailsBinding
+
+    private val viewModel: RouteDetailsViewModel by viewModels(
+        factoryProducer = { RouteDetailsViewModel.Factory },
+        extrasProducer = {
+            MutableCreationExtras(defaultViewModelCreationExtras).apply {
+                set(RouteDetailsViewModel.ROUTE_ID_KEY, routeId)
+            }
+        })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -19,10 +37,30 @@ class RouteDetailsFragment : Fragment(R.layout.fragment_route_details) {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.route.collect { routeState ->
+                    when (routeState) {
+                        is RouteDetailsState.Success -> {
+                            binding.routeName.text = routeState.viaFerrata.name
+                        }
+
+                        RouteDetailsState.Loading -> {}
+                        is RouteDetailsState.Error -> {}
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
+        private const val ARG_ROUTE_ID = "route_id"
+
         fun newInstance(routeId: Long) = RouteDetailsFragment().apply {
             arguments = Bundle().apply {
-                putLong("route_id", routeId)
+                putLong(ARG_ROUTE_ID, routeId)
             }
         }
     }
