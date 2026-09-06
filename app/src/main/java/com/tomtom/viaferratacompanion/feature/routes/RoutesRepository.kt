@@ -41,5 +41,5 @@ class RoutesRepository {
         )
     )
 
-    suspend fun getRoute(id: Long): ViaFerrata = getRoutes().first { it.id == id }
+    suspend fun getRoute(id: Long): ViaFerrata? = getRoutes().firstOrNull { it.id == id }
 }

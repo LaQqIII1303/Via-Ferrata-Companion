@@ -39,20 +39,62 @@ class RouteDetailsFragment : Fragment(R.layout.fragment_route_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.backButton.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.route.collect { routeState ->
                     when (routeState) {
                         is RouteDetailsState.Success -> {
-                            binding.routeName.text = routeState.viaFerrata.name
+                            showViaFerrataDetails(routeState.viaFerrata)
                         }
 
-                        RouteDetailsState.Loading -> {}
-                        is RouteDetailsState.Error -> {}
+                        RouteDetailsState.Loading -> {
+                            showLoading()
+                        }
+
+                        is RouteDetailsState.Error -> {
+                            showError(routeState.message)
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun showError(message: String) {
+        binding.errorText.text = message
+        binding.loadingProgressBar.visibility = View.GONE
+        binding.viaFerrataDetails.visibility = View.GONE
+        binding.errorText.visibility = View.VISIBLE
+        binding.backButton.visibility = View.VISIBLE
+    }
+
+    private fun showLoading() {
+        binding.loadingProgressBar.visibility = View.VISIBLE
+        binding.viaFerrataDetails.visibility = View.GONE
+        binding.errorText.visibility = View.GONE
+        binding.backButton.visibility = View.GONE
+    }
+
+    private fun showViaFerrataDetails(viaFerrata: ViaFerrata) {
+        binding.routeName.text = viaFerrata.name
+        binding.routeCountry.text = getString(R.string.route_country, viaFerrata.country)
+        binding.routeDifficulty.text = getString(
+            R.string.route_difficulty, viaFerrata.difficulty
+        )
+        binding.routeDuration.text = getString(
+            R.string.route_duration, viaFerrata.durationMinutes
+        )
+        binding.routeElevation.text = getString(
+            R.string.route_elevation, viaFerrata.elevationGain
+        )
+        binding.viaFerrataDetails.visibility = View.VISIBLE
+        binding.loadingProgressBar.visibility = View.GONE
+        binding.errorText.visibility = View.GONE
+        binding.backButton.visibility = View.VISIBLE
     }
 
     companion object {
