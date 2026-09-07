@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 class RouteListFragment : Fragment(R.layout.fragment_route_list) {
 
     private lateinit var binding: FragmentRouteListBinding
-    private val viewModel: RouteListViewModel by viewModels()
+    private val viewModel: RouteListViewModel by viewModels(
+        factoryProducer = { RouteListViewModel.Factory })
     private lateinit var adapter: RouteAdapter
 
     override fun onCreateView(
