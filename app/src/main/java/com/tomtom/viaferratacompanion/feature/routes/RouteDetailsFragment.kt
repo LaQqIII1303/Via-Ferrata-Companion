@@ -91,6 +91,7 @@ class RouteDetailsFragment : Fragment(R.layout.fragment_route_details) {
         binding.routeElevation.text = getString(
             R.string.route_elevation, viaFerrata.elevationGain
         )
+        binding.routeDescription.text = viaFerrata.description
         binding.viaFerrataDetails.visibility = View.VISIBLE
         binding.loadingProgressBar.visibility = View.GONE
         binding.errorText.visibility = View.GONE

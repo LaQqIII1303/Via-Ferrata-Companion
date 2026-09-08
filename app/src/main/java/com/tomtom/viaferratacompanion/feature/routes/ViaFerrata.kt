@@ -5,6 +5,7 @@ data class ViaFerrata(
     val name: String,
     val country: String,
     val difficulty: String,
+    val description: String,
     val durationMinutes: Int,
     val elevationGain: Int
 )
