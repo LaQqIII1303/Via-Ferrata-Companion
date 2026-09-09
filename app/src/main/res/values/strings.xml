@@ -9,4 +9,6 @@
     <string name="route_details_error">Sorry, something went wrong</string>
     <string name="route_details_back">Back</string>
     <string name="route_list_error">Sorry, something went wrong</string>
+    <string name="difficulty_filter">Difficulty</string>
+    <string name="country_filter">Country</string>
 </resources>

@@ -45,7 +45,7 @@ class RouteListFragment : Fragment(R.layout.fragment_route_list) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.routes.collect { routeListState ->
+                viewModel.filteredRoutes.collect { routeListState ->
                     when (routeListState) {
                         is RouteListState.Error -> {
                             showError(routeListState.message)
